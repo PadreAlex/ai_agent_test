@@ -45,11 +45,13 @@ def multithread_queue_handler(ch, props, answer, delivery_tag):
 
 def handle_message(ch, method, props, req):
     def thread_handler():
+        # for multithreading proof
         start = time.time()
         thread_name = threading.current_thread().name
         try:
             body = json.loads(req)
             question = body.get("question", "")
+            # for multithreading proof
             print(f"[{datetime.now()}] [Thread {thread_name}] START question: {question}")
 
             try:
@@ -63,14 +65,17 @@ def handle_message(ch, method, props, req):
             state = State(question=question, query=query, result=result)
             answer = ai_agent.generate_answer(state)
 
+            # for multithread safety. Non safe by default
             cb = functools.partial(multithread_queue_handler, ch, props, answer, method.delivery_tag)
             ch.connection.add_callback_threadsafe(cb)
 
         except Exception as e:
             print(f"Error while processing message: {str(e)}")
+            # for multithread safety. Non safe by default
             nack_cb = functools.partial(ch.basic_nack, delivery_tag=method.delivery_tag, requeue=False)
             ch.connection.add_callback_threadsafe(nack_cb)
         finally:
+            # for multithreading proof
             end = time.time()
             print(f"[{datetime.now()}] [Thread {thread_name}] DONE in {end - start:.2f}s")
 
