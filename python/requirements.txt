@@ -1,0 +1,9 @@
+pika
+langchain
+langchain-core
+langchain-google-genai
+langchain-community
+chromadb
+sentence-transformers
+psycopg2-binary
+hf_xet
