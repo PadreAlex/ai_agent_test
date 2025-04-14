@@ -13,4 +13,7 @@ connectToRabbitMq().then(() => {
   app.listen(port, () =>
     console.log(`Server running at http://localhost:${port}`)
   );
+}).catch((error) => {
+  console.error(`Failed to connect to RabbitMQ: ${error.message}`);
+  process.exit(1)
 });
